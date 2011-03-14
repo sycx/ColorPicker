@@ -4,8 +4,12 @@ ColorPicker V1.0 is a powerful color picker for all iOS devices.
 It supports RGB/HSV and CMYK color schemes and the alpha channel as well.
 CMYK is only supported on the iPad view, because the iPhone display ist definitly too small for it.
 
+To show how it works, I put the ColorPicker in a very simple view based applikation, which can be build and run directly for testing.
+
+This code is free to use, but I recommend, that you to write me an email with the name of the App in which you implemented my Colorpicker, when the App is available for download. Thanks for that.
+
 Have fun with this piece of code
 
-Screenshots are avaiable on http://www.cbc-apps.com under "Referenzen/ColorPicker"
+Screenshots are available on http://www.cbc-apps.com under "Referenzen/ColorPicker"
 
 Claus Bönnhoff
