@@ -702,6 +702,7 @@
 					data[x*4+y*width*4+2]=color.green;
 					data[x*4+y*width*4+3]=color.red;
 					color.vvalue-=(1.0/255.0);
+                    [self hsvToRGB:&color];
 				}
 				color.saturation+=(1.0/255.0);
 			}
@@ -725,6 +726,7 @@
 					data[x*4+y*width*4+2]=color.green;
 					data[x*4+y*width*4+3]=color.red;
 					color.vvalue-=(1.0/255.0);
+                    [self hsvToRGB:&color];
 				}
 				color.hue+=(360.0/255.0);
 			}
@@ -748,6 +750,7 @@
 					data[x*4+y*width*4+2]=color.green;
 					data[x*4+y*width*4+3]=color.red;
 					color.saturation-=(1.0/255.0);
+                    [self hsvToRGB:&color];
 				}
 				color.hue+=(360.0/255.0);
 			}
