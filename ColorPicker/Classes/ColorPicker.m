@@ -421,7 +421,7 @@
 	if(delta==0)
 		saturation=0;
 	else 
-		saturation=round(delta/vvalue);
+		saturation=delta/vvalue;
 	
 	if(saturation==0)
 		hue=0;
@@ -442,9 +442,9 @@
 		if(hue<0.0)
 			hue+=360.0;
 	}
-	color->hue=round(hue);
-	color->saturation=round(saturation);
-	color->vvalue=round(vvalue);
+	color->hue=hue;
+	color->saturation=saturation;
+	color->vvalue=vvalue;
 	return;	
 }
 
