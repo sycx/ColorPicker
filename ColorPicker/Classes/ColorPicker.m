@@ -619,7 +619,9 @@
 	UBYTE *data = CGBitmapContextGetData (twoComponentContext);
 	int blue,green,red;
 	struct rgbhsvColor color;
-	CGRect frame;
+	CGRect frame = circleView.frame;
+    CGFloat xMax = twoComponentView.frame.size.width;
+    CGFloat yMax = twoComponentView.frame.size.height;
 	
 	// which component must be drawn ?
 	switch (rgbhsvButton.selectedSegmentIndex)
@@ -641,7 +643,8 @@
 				blue++;
 			}
 			// calc position for selector circle
-			frame=CGRectMake((actualColor.blue)-10,(255.0-actualColor.green)-10, circleView.frame.size.width, circleView.frame.size.height);
+            frame.origin.x = (actualColor.blue / 255.0 * xMax)-10;
+            frame.origin.y = (yMax - actualColor.green / 255.0 * yMax)-10;
 			// move circle to new position
 			circleView.frame=frame;
 			break;
@@ -662,7 +665,8 @@
 				blue++;
 			}
 
-			frame=CGRectMake((actualColor.blue)-10, (255-actualColor.red)-10, circleView.frame.size.width, circleView.frame.size.height);
+            frame.origin.x = (actualColor.blue / 255.0 * xMax) - 10.0;
+            frame.origin.y = (yMax - actualColor.red / 255.0 * yMax) - 10.0;
 			circleView.frame=frame;
 			break;
 			
@@ -683,7 +687,8 @@
 				red++;
 			}
 			
-			frame=CGRectMake((actualColor.red)-10, (255-actualColor.green)-10, circleView.frame.size.width, circleView.frame.size.height);
+			frame.origin.x = (actualColor.red / 255.0 * xMax) - 10.0;
+            frame.origin.y = (yMax - actualColor.green / 255.0 * yMax) -10.0;
 			circleView.frame=frame;
 			break;
 
@@ -707,7 +712,8 @@
 				color.saturation+=(1.0/255.0);
 			}
 			
-			frame=CGRectMake((actualColor.saturation*255.0)-10, (255-actualColor.vvalue*255.0)-10, circleView.frame.size.width, circleView.frame.size.height);
+            frame.origin.x = (actualColor.saturation * xMax) - 10.0;
+            frame.origin.y = (yMax - actualColor.vvalue * yMax) - 10.0;
 			circleView.frame=frame;
 			break;
 
@@ -731,7 +737,8 @@
 				color.hue+=(360.0/255.0);
 			}
 			
-			frame=CGRectMake((actualColor.hue*255.0/360.0)-10, (255-actualColor.vvalue*255.0)-10, circleView.frame.size.width, circleView.frame.size.height);
+            frame.origin.x = (actualColor.hue / 360.0 * xMax) - 10.0;
+            frame.origin.y = (yMax - actualColor.vvalue * yMax) - 10.0;
 			circleView.frame=frame;
 			break;
 
@@ -755,7 +762,8 @@
 				color.hue+=(360.0/255.0);
 			}
 			
-			frame=CGRectMake((actualColor.hue*255.0/360.0)-10, (255-actualColor.saturation*255.0)-10, circleView.frame.size.width, circleView.frame.size.height);
+            frame.origin.x = (actualColor.hue / 360.0 * xMax) - 10.0;
+            frame.origin.y = (yMax - actualColor.saturation * yMax) - 10.0;
 			circleView.frame=frame;
 			break;
 
