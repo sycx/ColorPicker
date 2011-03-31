@@ -455,8 +455,8 @@
 -(void)drawOneComponentImage
 {
 	// get image size
-	int width=CGImageGetWidth(oneComponentView.image.CGImage);
-	int height=CGImageGetHeight(oneComponentView.image.CGImage);
+	int width = self.oneComponentView.frame.size.width;
+	int height = self.oneComponentView.frame.size.height;
 	int red,green,blue;
 	struct rgbhsvColor color;
 	float xPos;
@@ -609,8 +609,8 @@
 -(void)drawTwoComponentImage
 {
 	// get image size
-	int width=CGImageGetWidth(twoComponentView.image.CGImage);
-	int height=CGImageGetHeight(twoComponentView.image.CGImage);
+	int width = self.twoComponentView.frame.size.width;
+	int height = self.twoComponentView.frame.size.height;
 	
 	// delete old picker image
 	twoComponentView.image=nil;
@@ -780,23 +780,16 @@
 }
 
 // get rgba bitmap of image
-CGContextRef CreateARGBBitmapContext (CGImageRef inImage)
+CGContextRef CreateARGBBitmapContext (int pixelsWide, int pixelsHigh)
 {
     CGContextRef    context = NULL;
     CGColorSpaceRef colorSpace;
-    UBYTE *          bitmapData;
-    int             bitmapByteCount;
     int             bitmapBytesPerRow;
-	
-	// Get image width, height. We'll use the entire image.
-    int pixelsWide = CGImageGetWidth(inImage);
-    int pixelsHigh = CGImageGetHeight(inImage);
 	
     // Declare the number of bytes per row. Each pixel in the bitmap in this
     // example is represented by 4 bytes; 8 bits each of red, green, blue, and
     // alpha.
     bitmapBytesPerRow   = (pixelsWide * 4);
-    bitmapByteCount     = (bitmapBytesPerRow * pixelsHigh);
 	
     colorSpace = CGColorSpaceCreateDeviceRGB();
     if (colorSpace == NULL)
@@ -805,21 +798,11 @@ CGContextRef CreateARGBBitmapContext (CGImageRef inImage)
         return NULL;
     }
 	
-    // Allocate memory for image data. This is the destination in memory
-    // where any drawing to the bitmap context will be rendered.
-    bitmapData = calloc( bitmapByteCount, sizeof(UBYTE) );
-    if (bitmapData == NULL) 
-    {
-        fprintf (stderr, "Memory not allocated!");
-        CGColorSpaceRelease( colorSpace );
-        return NULL;
-    }
-	
     // Create the bitmap context. We want pre-multiplied ARGB, 8-bits 
     // per component. Regardless of what the source image format is 
     // (CMYK, Grayscale, and so on) it will be converted over to the format
     // specified here by CGBitmapContextCreate.
-    context = CGBitmapContextCreate (bitmapData,
+    context = CGBitmapContextCreate (NULL,  // pass NULL require iOS4
 									 pixelsWide,
 									 pixelsHigh,
 									 8,      // bits per component
@@ -828,7 +811,6 @@ CGContextRef CreateARGBBitmapContext (CGImageRef inImage)
 									 kCGBitmapByteOrder32Little|kCGImageAlphaPremultipliedLast);
     if (context == NULL)
     {
-        free (bitmapData);
         fprintf (stderr, "Context not created!");
     }
 	
@@ -1428,46 +1410,11 @@ CGContextRef CreateARGBBitmapContext (CGImageRef inImage)
 {
     [super viewDidLoad];
 	
-	// get base image for the two component picker
-	UIImage *twoComponentImage=[UIImage imageNamed:@"colorpicker_twocomponent.png"];
-	if(twoComponentImage)
-	{
-		twoComponentView.image=twoComponentImage;
-		// get the bitmap
-		twoComponentContext = CreateARGBBitmapContext(twoComponentImage.CGImage);
-		if (twoComponentContext!=NULL) 
-		{ 
-			// Get image width, height. We'll use the entire image.
-			size_t imageWidth = CGImageGetWidth(twoComponentImage.CGImage);
-			size_t imageHeight = CGImageGetHeight(twoComponentImage.CGImage);
-			CGRect imageRect = CGRectMake(0,0,imageWidth,imageHeight); 
-			
-			// Draw the image to the bitmap context. Once we draw, the memory 
-			// allocated for the context for rendering will then contain the 
-			// raw image data in the specified color space.
-			CGContextDrawImage(twoComponentContext, imageRect, twoComponentImage.CGImage); 
-		}
-	}
-	// get base image for the one component picker
-	UIImage *oneComponentImage=[UIImage imageNamed:@"colorpicker_onecomponent.png"];
-	if(oneComponentImage)
-	{
-		oneComponentView.image=oneComponentImage;
-		// get the bitmap
-		oneComponentContext = CreateARGBBitmapContext(oneComponentImage.CGImage);
-		if (oneComponentContext!=NULL) 
-		{ 
-			// Get image width, height. We'll use the entire image.
-			size_t imageWidth = CGImageGetWidth(oneComponentImage.CGImage);
-			size_t imageHeight = CGImageGetHeight(oneComponentImage.CGImage);
-			CGRect imageRect = CGRectMake(0,0,imageWidth,imageHeight);
-			
-			// Draw the image to the bitmap context. Once we draw, the memory 
-			// allocated for the context for rendering will then contain the 
-			// raw image data in the specified color space.
-			CGContextDrawImage(oneComponentContext, imageRect, oneComponentImage.CGImage); 
-		}
-	}
+    twoComponentContext = CreateARGBBitmapContext(self.twoComponentView.frame.size.width,
+                                                  self.twoComponentView.frame.size.height);
+    oneComponentContext = CreateARGBBitmapContext(self.oneComponentView.frame.size.width,
+                                                  self.oneComponentView.frame.size.height);
+	
 	
 	// selector images. circle for two component and arrow for one component
 	circleView=[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"circle.png"]];
