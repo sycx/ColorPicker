@@ -545,7 +545,7 @@
 					data[x*4+y*width*4+2]=color.green;
 					data[x*4+y*width*4+3]=color.red;
 				}
-				color.hue+=(360.0/255.0);
+				color.hue+=(360.0/width);
 			}
 			frame=CGRectMake(((float)actualColor.hue*oneComponentView.frame.size.width/360.0)-10, 0, arrowView.frame.size.width, arrowView.frame.size.height);
 			arrowView.frame=frame;
@@ -566,7 +566,7 @@
 					data[x*4+y*width*4+2]=color.green;
 					data[x*4+y*width*4+3]=color.red;
 				}
-				color.saturation+=(1/255.0);
+				color.saturation+=(1/height);
 			}
 			frame=CGRectMake(((float)actualColor.saturation*oneComponentView.frame.size.width)-10, 0, arrowView.frame.size.width, arrowView.frame.size.height);
 			arrowView.frame=frame;
@@ -587,7 +587,7 @@
 					data[x*4+y*width*4+2]=color.green;
 					data[x*4+y*width*4+3]=color.red;
 				}
-				color.vvalue+=(1.0/255.0);
+				color.vvalue+=(1.0/width);
 			}
 			frame=CGRectMake(((float)actualColor.vvalue*oneComponentView.frame.size.width)-10, 0, arrowView.frame.size.width, arrowView.frame.size.height);
 			arrowView.frame=frame;
@@ -709,7 +709,7 @@
 					color.vvalue-=(1.0/255.0);
                     [self hsvToRGB:&color];
 				}
-				color.saturation+=(1.0/255.0);
+				color.saturation+=(1.0/height);
 			}
 			
             frame.origin.x = (actualColor.saturation * xMax) - 10.0;
@@ -734,7 +734,7 @@
 					color.vvalue-=(1.0/255.0);
                     [self hsvToRGB:&color];
 				}
-				color.hue+=(360.0/255.0);
+				color.hue+=(360.0/height);
 			}
 			
             frame.origin.x = (actualColor.hue / 360.0 * xMax) - 10.0;
@@ -759,7 +759,7 @@
 					color.saturation-=(1.0/255.0);
                     [self hsvToRGB:&color];
 				}
-				color.hue+=(360.0/255.0);
+				color.hue+=(360.0/height);
 			}
 			
             frame.origin.x = (actualColor.hue / 360.0 * xMax) - 10.0;
