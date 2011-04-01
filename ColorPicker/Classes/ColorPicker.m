@@ -7,6 +7,9 @@
 //
 
 #import "ColorPicker.h"
+@interface ColorPicker()
+CGContextRef CreateARGBBitmapContext (int pixelsWide, int pixelsHigh);
+@end
 
 @implementation ColorPicker
 
@@ -463,7 +466,17 @@
 	
 	// delete old picker image
 	oneComponentView.image=nil;
-	
+    
+    // if view size change, need recreate context
+    size_t oldWidth = CGBitmapContextGetWidth(oneComponentContext);
+    size_t oldHeight = CGBitmapContextGetHeight(oneComponentContext);
+    
+    if (oldWidth != width || oldHeight != height) {
+        CGContextRelease(oneComponentContext);
+        oneComponentContext = CreateARGBBitmapContext(width, height);
+    }
+    
+	//CGContextClearRect(oneComponentContext, oneComponentView.frame);
 	// pointer image raw data
 	UBYTE *data = CGBitmapContextGetData (oneComponentContext);
 	CGRect frame;
@@ -483,7 +496,7 @@
 					data[x*4+y*width*4+2]=actualColor.green;	// green
 					data[x*4+y*width*4+3]=red;					// red;
 				}
-				red++;
+				red = round((float)x / (float)width * 255.0);
 			}
 			xPos=((float)actualColor.red*oneComponentView.frame.size.width/255.0);
 			// calc position of selector arrow
@@ -504,7 +517,7 @@
 					data[x*4+y*width*4+2]=green;
 					data[x*4+y*width*4+3]=actualColor.red;
 				}
-				green++;
+				green = round((float)x / (float)width * 255.0);
 			}
 			xPos=((float)actualColor.green*oneComponentView.frame.size.width/255.0);
 			frame=CGRectMake((xPos)-10, 0, arrowView.frame.size.width, arrowView.frame.size.height);
@@ -523,7 +536,7 @@
 					data[x*4+y*width*4+2]=actualColor.green;
 					data[x*4+y*width*4+3]=actualColor.red;
 				}
-				blue++;
+				blue = round((float)x / (float)width * 255.0);
 			}
 			xPos=((float)actualColor.blue*oneComponentView.frame.size.width/255.0);
 			frame=CGRectMake((xPos)-10, 0, arrowView.frame.size.width, arrowView.frame.size.height);
@@ -545,7 +558,7 @@
 					data[x*4+y*width*4+2]=color.green;
 					data[x*4+y*width*4+3]=color.red;
 				}
-				color.hue+=(360.0/width);
+				color.hue = (float)x / (float)width * 360.0;
 			}
 			frame=CGRectMake(((float)actualColor.hue*oneComponentView.frame.size.width/360.0)-10, 0, arrowView.frame.size.width, arrowView.frame.size.height);
 			arrowView.frame=frame;
@@ -566,7 +579,7 @@
 					data[x*4+y*width*4+2]=color.green;
 					data[x*4+y*width*4+3]=color.red;
 				}
-				color.saturation+=(1/height);
+				color.saturation = (float)x / (float)width;
 			}
 			frame=CGRectMake(((float)actualColor.saturation*oneComponentView.frame.size.width)-10, 0, arrowView.frame.size.width, arrowView.frame.size.height);
 			arrowView.frame=frame;
@@ -587,7 +600,7 @@
 					data[x*4+y*width*4+2]=color.green;
 					data[x*4+y*width*4+3]=color.red;
 				}
-				color.vvalue+=(1.0/width);
+				color.vvalue = (float)x / (float)width;
 			}
 			frame=CGRectMake(((float)actualColor.vvalue*oneComponentView.frame.size.width)-10, 0, arrowView.frame.size.width, arrowView.frame.size.height);
 			arrowView.frame=frame;
@@ -615,6 +628,15 @@
 	// delete old picker image
 	twoComponentView.image=nil;
 	
+    // if view size change, need recreate context
+    size_t oldWidth = CGBitmapContextGetWidth(twoComponentContext);
+    size_t oldHeight = CGBitmapContextGetHeight(twoComponentContext);
+    
+    if (oldWidth != width || oldHeight != height) {
+        CGContextRelease(twoComponentContext);
+        twoComponentContext = CreateARGBBitmapContext(width, height);
+    }
+    
 	// image raw data
 	UBYTE *data = CGBitmapContextGetData (twoComponentContext);
 	int blue,green,red;
@@ -637,10 +659,10 @@
 					data[x*4+y*width*4]=255;					// alpha
 					data[x*4+y*width*4+1]=blue;					// blue
 					data[x*4+y*width*4+2]=green;				// green
-					data[x*4+y*width*4+3]=actualColor.red;		// red
-					green--;		
+					data[x*4+y*width*4+3]=actualColor.red;		// red	
+                    green = round(255.0 - (float)y / (float)height * 255.0);
 				}
-				blue++;
+				blue = round((float)x / (float)width * 255.0);
 			}
 			// calc position for selector circle
             frame.origin.x = (actualColor.blue / 255.0 * xMax)-10;
@@ -651,18 +673,19 @@
 			
 		// red and blue
 		case 1:
-			blue=red=0;
+			blue=0;
 			for(int x=0;x<width;x++)
 			{
+                red = 255;
 				for(int y=0;y<height;y++)
 				{
 					data[x*4+y*width*4]=255;
 					data[x*4+y*width*4+1]=blue;
 					data[x*4+y*width*4+2]=actualColor.green;
 					data[x*4+y*width*4+3]=red;
-					red--;
+					red = round(255.0 - (float)y / (float)height *255.0);
 				}
-				blue++;
+				blue = round((float)x / (float)width *255.0);
 			}
 
             frame.origin.x = (actualColor.blue / 255.0 * xMax) - 10.0;
@@ -682,9 +705,9 @@
 					data[x*4+y*width*4+1]=actualColor.blue;
 					data[x*4+y*width*4+2]=green;
 					data[x*4+y*width*4+3]=red;
-					green--;
+					green = round(255.0 - (float)y / (float)height *255.0);;
 				}
-				red++;
+				red = round((float)x / (float)width *255.0);
 			}
 			
 			frame.origin.x = (actualColor.red / 255.0 * xMax) - 10.0;
@@ -706,10 +729,10 @@
 					data[x*4+y*width*4+1]=color.blue;
 					data[x*4+y*width*4+2]=color.green;
 					data[x*4+y*width*4+3]=color.red;
-					color.vvalue-=(1.0/255.0);
+                    color.vvalue = 1.0 - (float)y / (float)height;
                     [self hsvToRGB:&color];
 				}
-				color.saturation+=(1.0/height);
+				color.saturation = ((float)x / (float)height);
 			}
 			
             frame.origin.x = (actualColor.saturation * xMax) - 10.0;
@@ -731,10 +754,10 @@
 					data[x*4+y*width*4+1]=color.blue;
 					data[x*4+y*width*4+2]=color.green;
 					data[x*4+y*width*4+3]=color.red;
-					color.vvalue-=(1.0/255.0);
+					color.vvalue = 1.0 - (float)y / (float)height;
                     [self hsvToRGB:&color];
 				}
-				color.hue+=(360.0/height);
+				color.hue = ((float)x / (float)height * 360.0);
 			}
 			
             frame.origin.x = (actualColor.hue / 360.0 * xMax) - 10.0;
@@ -756,10 +779,10 @@
 					data[x*4+y*width*4+1]=color.blue;
 					data[x*4+y*width*4+2]=color.green;
 					data[x*4+y*width*4+3]=color.red;
-					color.saturation-=(1.0/255.0);
+					color.saturation = 1.0 - (float)y / (float)height;
                     [self hsvToRGB:&color];
 				}
-				color.hue+=(360.0/height);
+				color.hue = ((float)x / (float)height * 360.0);
 			}
 			
             frame.origin.x = (actualColor.hue / 360.0 * xMax) - 10.0;
